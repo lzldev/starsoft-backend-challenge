@@ -40,17 +40,14 @@ export class AuthService {
     return await this.userService.createUser(registerDto);
   }
 
-  private payloadFromUser({ id, username }: User): UserPayload {
+  payloadFromUser({ id, username }: User): UserPayload {
     return {
       id,
       username,
     };
   }
 
-  private comparePassword(
-    hashed_password: string,
-    password: string,
-  ): Promise<boolean> {
+  comparePassword(hashed_password: string, password: string): Promise<boolean> {
     return compare(password, hashed_password);
   }
 }

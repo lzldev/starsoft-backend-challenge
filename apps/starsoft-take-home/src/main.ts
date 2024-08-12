@@ -11,10 +11,10 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpUserErrorFilter());
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: false,
-      whitelist: false,
-      always: false,
-      validateCustomDecorators: false,
+      transform: true,
+      whitelist: true,
+      always: true,
+      validateCustomDecorators: true,
     }),
     new IgnoreEmptyObjectsPipe(),
   );

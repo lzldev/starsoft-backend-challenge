@@ -1,19 +1,22 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration } from './config/configuration';
 import { ApiModule } from './api/api.module';
 
-export type AppConfigService = ConfigService<{
+export type AppEnv = {
   DEV: boolean;
+  BCRYPT_ROUNDS: string;
+  SWAGGER: boolean;
+  JWT_SECRET: string;
   DATABASE_DBNAME: string;
   DATABASE_HOST: string;
   DATABASE_PORT: string;
   DATABASE_USERNAME: string;
   DATABASE_PASSWORD: string;
-}>;
+};
+
+export type AppConfigService = ConfigService<AppEnv>;
 
 @Module({
   imports: [
@@ -34,12 +37,12 @@ export type AppConfigService = ConfigService<{
           port: configService.get('DATABASE_PORT', 5432),
           username: configService.getOrThrow('DATABASE_USERNAME'),
           password: configService.getOrThrow('DATABASE_PASSWORD'),
+          logging: configService.get('DEV') ? ['query', 'error'] : [],
+          synchronize: configService.get('DEV'),
         };
       },
     }),
     ApiModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

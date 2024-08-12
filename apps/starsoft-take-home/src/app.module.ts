@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration } from './config/configuration';
 import { ApiModule } from './api/api.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { KAFKA_CLIENT_KEY } from './api/api.constants';
 
 export type AppEnv = {
   DEV: boolean;
@@ -14,6 +16,7 @@ export type AppEnv = {
   DATABASE_PORT: string;
   DATABASE_USERNAME: string;
   DATABASE_PASSWORD: string;
+  KAFKA_BROKERS: string;
 };
 
 export type AppConfigService = ConfigService<AppEnv>;
@@ -25,6 +28,29 @@ export type AppConfigService = ConfigService<AppEnv>;
       isGlobal: true,
       load: [configuration],
       envFilePath: ['.env', '.env.development.local'],
+    }),
+    ClientsModule.registerAsync({
+      isGlobal: true,
+      clients: [
+        {
+          name: KAFKA_CLIENT_KEY,
+          inject: [ConfigService],
+          useFactory: (configService: AppConfigService) => {
+            return {
+              transport: Transport.KAFKA,
+              options: {
+                client: {
+                  clientId: 'API',
+                  brokers: configService
+                    .getOrThrow<string>('KAFKA_BROKERS')
+                    .split(','),
+                },
+                producerOnlyMode: true,
+              },
+            };
+          },
+        },
+      ],
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

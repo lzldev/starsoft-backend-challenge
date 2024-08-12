@@ -1,27 +1,47 @@
 import { NestFactory } from '@nestjs/core';
 import { LogConsumerModule } from './log-consumer.module';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { KafkaOptions, MicroserviceOptions } from '@nestjs/microservices';
 import { PartitionAssigners } from 'kafkajs';
+import { KafkaBatchServer } from '@tawk.to/nestjs-batch-kafka';
+import {
+  KAFKA_MAX_WAIT_TIME_MS_DEFAULT,
+  KAFKA_MIN_BYTES_DEFAULT,
+} from './log-consumer.constants';
+
+const CLIENT_ID = 'log-consumer';
 
 async function bootstrap() {
+  const kafka_server = await new KafkaBatchServer({
+    client: {
+      clientId: CLIENT_ID,
+      brokers: process.env['KAFKA_BROKERS']?.split(',') || [],
+    },
+    run: {
+      autoCommit: false,
+      autoCommitInterval: 5000,
+      autoCommitThreshold: 100,
+      partitionsConsumedConcurrently: 4,
+    },
+    consumer: {
+      minBytes: KAFKA_MIN_BYTES_DEFAULT,
+      maxWaitTimeInMs: KAFKA_MAX_WAIT_TIME_MS_DEFAULT,
+      groupId: CLIENT_ID,
+      allowAutoTopicCreation: true,
+      partitionAssigners: [PartitionAssigners.roundRobin],
+    },
+  } satisfies KafkaOptions['options'] as any);
+
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     LogConsumerModule,
     {
-      transport: Transport.KAFKA,
-      options: {
-        client: {
-          clientId: 'log-consumer',
-          brokers: process.env['KAFKA_BROKERS']?.split(',') || [],
-        },
-        consumer: {
-          groupId: 'log-consumer',
-          allowAutoTopicCreation: true,
-          partitionAssigners: [PartitionAssigners.roundRobin],
-        },
-      },
+      strategy: kafka_server,
     },
   );
 
   await app.listen();
+
+  process.on('exit', async () => {
+    await kafka_server.close();
+  });
 }
 bootstrap();

@@ -1,13 +1,30 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { LogConsumerService } from './log-consumer.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Ctx, Payload } from '@nestjs/microservices';
+import { BatchProcessor, KafkaBatchContext } from '@tawk.to/nestjs-batch-kafka';
+import { KAFKA_API_LOGS_TOPIC } from 'global.constants';
 
 @Controller()
 export class LogConsumerController {
-  constructor(private readonly logConsumerService: LogConsumerService) {}
+  @Inject()
+  private logConsumerService: LogConsumerService;
 
-  @MessagePattern('api-logs')
-  apiLogs(@Payload() message: any) {
-    console.log(message);
+  @BatchProcessor(KAFKA_API_LOGS_TOPIC)
+  async processLogs(@Payload() data: any[], @Ctx() context: KafkaBatchContext) {
+    const heartbeat = context.getHeartbeat();
+    const resolveOffset = context.getResolveOffset();
+    const commitOffsetsIfNecessary = context.getCommitOffsetsIfNecessary();
+
+    await heartbeat();
+
+    const messages = context.getMessages();
+    const insert = await this.logConsumerService.insertBatch(data, messages);
+
+    console.info('CONSUMER', `INSERT ${insert.generatedMaps.length} LOGS`);
+
+    resolveOffset(messages.at(-1)!.offset);
+
+    await heartbeat();
+    await commitOffsetsIfNecessary();
   }
 }

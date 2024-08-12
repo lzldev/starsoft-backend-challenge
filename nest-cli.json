@@ -1,8 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "sourceRoot": "apps/starsoft-take-home/src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true,
+    "tsConfigPath": "apps/starsoft-take-home/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "root": "apps/starsoft-take-home",
+  "projects": {
+    "starsoft-take-home": {
+      "type": "application",
+      "root": "apps/starsoft-take-home",
+      "entryFile": "main",
+      "sourceRoot": "apps/starsoft-take-home/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/starsoft-take-home/tsconfig.app.json"
+      }
+    },
+    "log-consumer": {
+      "type": "application",
+      "root": "apps/log-consumer",
+      "entryFile": "main",
+      "sourceRoot": "apps/log-consumer/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/log-consumer/tsconfig.app.json"
+      }
+    }
   }
 }

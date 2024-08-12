@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Inject, Param, Put, Req } from '@nestjs/common';
+import { Body, Controller, Inject, Param, Put } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ReqUser } from './user.decorator';
 import { UserService } from './user.service';
 import { BasicResponseDto } from '../dto/basic-response.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from './role/roles.decorator';
-import { User, UserRole } from './entities/user.entity';
+import { UserRole } from './entities/user.entity';
 import { UserError } from '../../error/userError';
 import { UserPayload } from '../auth/user-payload.interface';
 

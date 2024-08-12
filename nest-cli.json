@@ -9,7 +9,10 @@
     "plugins": [
       {
         "name": "@nestjs/swagger",
-        "options": { "classValidatorShim": true, "introspectComments": true }
+        "options": {
+          "classValidatorShim": true,
+          "introspectComments": true
+        }
       }
     ]
   },
@@ -32,6 +35,15 @@
       "sourceRoot": "apps/log-consumer/src",
       "compilerOptions": {
         "tsConfigPath": "apps/log-consumer/tsconfig.app.json"
+      }
+    },
+    "shared-entities": {
+      "type": "library",
+      "root": "libs/shared-entities",
+      "entryFile": "index",
+      "sourceRoot": "libs/shared-entities/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/shared-entities/tsconfig.lib.json"
       }
     }
   }

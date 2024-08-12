@@ -4,7 +4,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 import { CreateUserDTO } from './dto/create-user.dto';
-import { BCRYPT_ROUNDS } from '../../constants';
+import { BCRYPT_ROUNDS } from '../../../../../constants';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()

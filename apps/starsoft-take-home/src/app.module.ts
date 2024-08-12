@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { configuration } from './config/configuration';
+import { ApiModule } from './api/api.module';
 
 export type AppConfigService = ConfigService<{
   DEV: boolean;
@@ -25,7 +26,6 @@ export type AppConfigService = ConfigService<{
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: AppConfigService) => {
-        console.log('dev', configService.get('DEV'));
         return {
           type: 'postgres',
           autoLoadEntities: true,
@@ -37,6 +37,7 @@ export type AppConfigService = ConfigService<{
         };
       },
     }),
+    ApiModule,
   ],
   controllers: [AppController],
   providers: [AppService],

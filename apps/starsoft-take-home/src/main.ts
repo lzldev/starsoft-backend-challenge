@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { HttpUserErrorFilter } from './error/userError.filter';
+import { IgnoreEmptyObjectsPipe } from './pipes/ignoreEmpty.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,16 +11,20 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpUserErrorFilter());
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
-      whitelist: true,
+      transform: false,
+      whitelist: false,
+      always: false,
+      validateCustomDecorators: false,
     }),
+    new IgnoreEmptyObjectsPipe(),
   );
 
-  if (!!process.env['SWAGGER']) {
+  if (process.env['SWAGGER']) {
     const config = new DocumentBuilder()
       .setTitle('Starsoft Take Home API')
       .setDescription('Starsoft Take Home API Spec')
       .setVersion('1.0')
+      .addBearerAuth()
       .build();
 
     const document = SwaggerModule.createDocument(app, config);

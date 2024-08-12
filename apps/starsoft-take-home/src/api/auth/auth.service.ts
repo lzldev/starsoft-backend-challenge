@@ -2,35 +2,32 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
-import { ConfigService } from '@nestjs/config';
-import { AppEnv } from '../../app.module';
 import { UserError } from '../../error/userError';
+import { compare } from 'bcrypt';
+import { UserPayload } from './user-payload.interface';
 
 @Injectable()
 export class AuthService {
   @Inject()
   private userService: UserService;
 
-  @Inject()
-  private configService: ConfigService<AppEnv>;
-
   async validateCredentials(
     username: string,
     password: string,
-  ): Promise<User | null> {
+  ): Promise<UserPayload | null> {
     const user = await this.userService.findByUsername(username);
 
     if (!user) {
       return null;
     }
 
-    const result = await this.userService.comparePassword(user, password);
+    const result = await this.comparePassword(user.hashed_password, password);
 
     if (!result) {
       return null;
     }
 
-    return user;
+    return this.payloadFromUser(user);
   }
 
   async registerUser(registerDto: RegisterDto) {
@@ -41,5 +38,19 @@ export class AuthService {
     }
 
     return await this.userService.createUser(registerDto);
+  }
+
+  private payloadFromUser({ id, username }: User): UserPayload {
+    return {
+      id,
+      username,
+    };
+  }
+
+  private comparePassword(
+    hashed_password: string,
+    password: string,
+  ): Promise<boolean> {
+    return compare(password, hashed_password);
   }
 }

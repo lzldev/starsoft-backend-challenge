@@ -1,15 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { InsertResult, Repository } from 'typeorm';
-import { compare, hash } from 'bcrypt';
+import { Repository } from 'typeorm';
+import { hash } from 'bcrypt';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { BCRYPT_ROUNDS } from '../../constants';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
+
+  findById(id: number): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 
   findByUsername(username: string): Promise<User | null> {
     return this.userRepository.findOne({
@@ -17,10 +26,6 @@ export class UserService {
         username,
       },
     });
-  }
-
-  comparePassword(user: User, password: string): Promise<boolean> {
-    return compare(password, user.hashed_password);
   }
 
   userExists(user: Pick<User, 'username' | 'email'>): Promise<boolean> {
@@ -37,5 +42,14 @@ export class UserService {
       email,
       hashed_password,
     });
+  }
+
+  updateUser(userId: number, updateUserDto: UpdateUserDto) {
+    return this.userRepository.update(
+      {
+        id: userId,
+      },
+      updateUserDto,
+    );
   }
 }

@@ -1,5 +1,8 @@
 import { SetMetadata } from '@nestjs/common';
 
-export const IS_PUBLIC_KEY = 'PUBLIC';
+export const PUBLIC_METADATA_KEY = 'PUBLIC';
 
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
+/**
+ * Use to Define a Public Route , Opting out of Auth
+ */
+export const Public = (value = true) => SetMetadata(PUBLIC_METADATA_KEY, value);

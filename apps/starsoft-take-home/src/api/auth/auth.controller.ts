@@ -1,30 +1,18 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  Inject,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from './strategies/local/local.guard';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
-import { IsString } from 'class-validator';
-import { ApiProperty, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBody, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
-
-export class LoginResponse {
-  @IsString()
-  @ApiProperty()
-  token: string;
-}
+import { LoginResponseDto } from './dto/login-response.dto';
+import { BasicResponseDto } from '../dto/basic-response.dto';
+import { LoginDto } from './dto/login.dto';
 
 @Public()
-@Controller()
+@ApiTags('auth')
+@Controller('auth')
 export class AuthController {
   @Inject()
   private jwtService: JwtService;
@@ -33,20 +21,25 @@ export class AuthController {
   private authService: AuthService;
 
   @UseGuards(LocalAuthGuard)
-  @Post('/login')
+  @ApiBody({
+    type: LoginDto,
+  })
   @ApiUnauthorizedResponse({
     description: 'Unauthorized',
   })
-  login(@Req() req: Request, @Body() _loginDto: LoginDto): LoginResponse {
+  @Post('/login')
+  login(@Req() req: Request): LoginResponseDto {
     return {
       token: this.jwtService.sign({ ...req.user! }),
     };
   }
 
   @Post('/register')
-  async register(@Body() registerDto: RegisterDto) {
+  async register(@Body() registerDto: RegisterDto): Promise<BasicResponseDto> {
     await this.authService.registerUser(registerDto);
 
-    return 'Success' as const;
+    return {
+      message: 'Success',
+    };
   }
 }

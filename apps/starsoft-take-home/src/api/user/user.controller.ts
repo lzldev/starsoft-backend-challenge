@@ -14,7 +14,7 @@ import { UserPayload } from '../auth/user-payload.interface';
 @Controller('user')
 export class UserController {
   @Inject()
-  userService: UserService;
+  private userService: UserService;
 
   @Put()
   async updateSelf(

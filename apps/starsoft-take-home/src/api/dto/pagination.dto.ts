@@ -19,5 +19,5 @@ export class PaginationDto {
   @ApiProperty({
     required: false,
   })
-  pageSize: number = 5;
+  pageSize: number = 10;
 }

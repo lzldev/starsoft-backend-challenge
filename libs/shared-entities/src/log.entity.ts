@@ -12,9 +12,13 @@ export class Message {
 
 @Entity()
 export class Log {
+  @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
 
+  @ApiProperty({
+    type: Message,
+  })
   @Column('jsonb')
   log: Message;
 }

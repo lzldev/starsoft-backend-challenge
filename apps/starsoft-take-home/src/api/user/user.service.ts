@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
@@ -6,16 +6,15 @@ import { hash } from 'bcrypt';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BCRYPT_ROUNDS } from '../api.constants';
-import { InjectKafkaClient } from '../../decorators/kafka.client.decorator';
-import { ClientKafka } from '@nestjs/microservices';
+import { LoggerService } from '../../logger/logger.service';
 
 @Injectable()
 export class UserService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
 
-  @InjectKafkaClient()
-  private kafkaClient: ClientKafka;
+  @Inject()
+  private loggerService: LoggerService;
 
   findById(id: number): Promise<User | null> {
     return this.userRepository.findOne({
@@ -42,23 +41,25 @@ export class UserService {
   async createUser({ username, password, email }: CreateUserDTO) {
     const hashed_password = await hash(password, BCRYPT_ROUNDS);
 
-    const result = await this.userRepository.create({
+    const user = await this.userRepository.insert({
       username,
       email,
       hashed_password,
     });
 
-    return result;
+    void this.loggerService.emitLogEvent('user-created', user.generatedMaps);
+    return user.generatedMaps;
   }
 
   async updateUser(userId: number, updateUserDto: UpdateUserDto) {
-    const result = await this.userRepository.update(
+    const user = await this.userRepository.update(
       {
         id: userId,
       },
       updateUserDto,
     );
 
-    return result;
+    void this.loggerService.emitLogEvent('user-updated', user.generatedMaps);
+    return user;
   }
 }

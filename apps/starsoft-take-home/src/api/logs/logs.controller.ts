@@ -1,9 +1,10 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LogsService } from './logs.service';
-import { FindLogsQueryDto } from './dto/find-query.dto';
+import { FindLogsQueryDto } from './dto/logs-find-query.dto';
 import { Roles } from '../user/role/roles.decorator';
 import { UserRole } from '../user/entities/user.entity';
+import { LogsFindResponseDto } from './dto/logs-find-response.dto';
 
 @ApiTags('logs')
 @Controller('logs')
@@ -14,7 +15,10 @@ export class LogsController {
 
   @Get()
   @Roles(UserRole.ADMIN)
-  findAll(@Query() pagination: FindLogsQueryDto) {
+  @ApiResponse({
+    type: LogsFindResponseDto,
+  })
+  findAll(@Query() pagination: FindLogsQueryDto): Promise<LogsFindResponseDto> {
     return this.logsService.findPaginated(pagination);
   }
 }

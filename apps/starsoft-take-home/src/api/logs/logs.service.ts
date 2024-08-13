@@ -2,7 +2,7 @@ import { Log } from '@app/shared-entities';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { FindLogsQueryDto } from './dto/find-query.dto';
+import { FindLogsQueryDto } from './dto/logs-find-query.dto';
 
 @Injectable()
 export class LogsService {
@@ -18,9 +18,12 @@ export class LogsService {
         .andWhere(`(log.log->> 'timestamp')::NUMERIC >= ${pagination.from}`);
     }
 
-    return query
+    const [logs, count] = await query
+      .orderBy('log.id', 'DESC')
       .skip(pagination.page * pagination.pageSize)
       .take(pagination.pageSize)
       .getManyAndCount();
+
+    return { logs, total: count };
   }
 }

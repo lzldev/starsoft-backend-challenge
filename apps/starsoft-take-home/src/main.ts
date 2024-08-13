@@ -21,9 +21,9 @@ async function bootstrap() {
 
   if (process.env['SWAGGER']) {
     const config = new DocumentBuilder()
-      .setTitle('Starsoft Take Home API')
-      .setDescription('Starsoft Take Home API Spec')
-      .setVersion('1.0')
+      .setTitle('Starsoft Backend Challenge API')
+      .setDescription('OpenAPI spec for the Startsoft Backend Challenge')
+      .setVersion('0.1')
       .addBearerAuth()
       .build();
 

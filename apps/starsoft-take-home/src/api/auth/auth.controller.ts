@@ -74,10 +74,10 @@ export class AuthController {
       throw new UserError('User not found');
     }
 
-    const newPayload = this.authService.payloadFromUser(user);
+    const payload = this.authService.payloadFromUser(user);
 
     return {
-      token: this.jwtService.sign({ ...newPayload }),
+      token: this.jwtService.sign({ ...payload }),
     };
   }
 }

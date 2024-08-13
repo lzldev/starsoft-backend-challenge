@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { InjectKafkaClient } from '../decorators/kafka.client.decorator';
-import { KAFKA_API_LOGS_TOPIC } from 'global.constants';
+import { KAFKA_API_LOGS_TOPIC } from '@app/shared-entities/shared.constants';
 
 @Injectable()
 export class EventsService {

@@ -2,7 +2,7 @@ import { Controller, Inject } from '@nestjs/common';
 import { LogConsumerService } from './log-consumer.service';
 import { Ctx, Payload } from '@nestjs/microservices';
 import { BatchProcessor, KafkaBatchContext } from '@tawk.to/nestjs-batch-kafka';
-import { KAFKA_API_LOGS_TOPIC } from 'global.constants';
+import { KAFKA_API_LOGS_TOPIC } from '@app/shared-entities/shared.constants';
 
 @Controller()
 export class LogConsumerController {

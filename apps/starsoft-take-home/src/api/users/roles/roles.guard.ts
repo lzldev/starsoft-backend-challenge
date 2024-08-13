@@ -1,18 +1,18 @@
 import { Request } from 'express';
 import { CanActivate, ExecutionContext, Inject } from '@nestjs/common';
-import { UsersService } from '../users.service';
 import { UserPayload } from '../../auth/user-payload.interface';
 import { UserRole } from '../entities/user.entity';
 import { Reflector } from '@nestjs/core';
+import { RolesService } from './roles.service';
 
 export const ROLES_METADATA_KEY = 'roles';
 
 export class RoleGuard implements CanActivate {
   @Inject()
-  private usersService: UsersService;
+  private reflector: Reflector;
 
   @Inject()
-  private reflector: Reflector;
+  private roleService: RolesService;
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.getAllAndOverride<UserRole[]>(
@@ -31,9 +31,9 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
-    const user = await this.usersService.findById(payload.id);
+    const userRole = await this.roleService.userRole(payload.id);
 
-    if (!user) {
+    if (!userRole || !roles.includes(userRole)) {
       return false;
     }
 

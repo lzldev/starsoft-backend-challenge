@@ -46,8 +46,4 @@ export type AppConfigService = ConfigService<AppEnv>;
   controllers: [LogConsumerController],
   providers: [LogConsumerService],
 })
-export class LogConsumerModule implements OnModuleInit {
-  onModuleInit() {
-    console.log('Module Init');
-  }
-}
+export class LogConsumerModule {}

@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { ROLES_METADATA_KEY } from './role.guard';
+import { ROLES_METADATA_KEY } from './roles.guard';
 import { UserRole } from '../entities/user.entity';
 
 /**

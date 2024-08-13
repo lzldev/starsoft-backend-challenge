@@ -7,6 +7,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BCRYPT_ROUNDS } from '../api.constants';
 import { EventsService } from '../../events/events.service';
+import { RolesService } from './roles/roles.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,9 @@ export class UsersService {
 
   @Inject()
   private eventsService: EventsService;
+
+  @Inject()
+  private rolesService: RolesService;
 
   findById(id: number): Promise<User | null> {
     return this.userRepository.findOne({
@@ -59,6 +63,7 @@ export class UsersService {
       updateUserDto,
     );
 
+    void this.rolesService.dropCache(userId);
     void this.eventsService.emitLogEvent('user-updated', user.generatedMaps);
     return user;
   }

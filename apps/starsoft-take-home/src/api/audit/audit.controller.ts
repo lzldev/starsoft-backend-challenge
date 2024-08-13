@@ -8,7 +8,7 @@ import {
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuditService } from './audit.service';
 import { AuditQueryDto } from './dto/audit-query.dto';
-import { Roles } from '../users/role/roles.decorator';
+import { Roles } from '../users/roles/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import { AuditFindResponseDto } from './dto/audit-response.dto';
 import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';

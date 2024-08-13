@@ -1,0 +1,9 @@
+version: '3.9'
+
+# Dev Compose File
+
+include:
+  - path:
+      - compose.infra.yaml
+  - path:
+      - compose.app.yaml

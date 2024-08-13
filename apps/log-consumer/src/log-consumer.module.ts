@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { LogConsumerController } from './log-consumer.controller';
 import { LogConsumerService } from './log-consumer.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';

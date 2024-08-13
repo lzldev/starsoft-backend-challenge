@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:7-alpine3.20
+    restart: always
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: 'redis-cli SET HEALTH 1 EX 10'
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+  db:
+    image: postgres:16.4-alpine3.20
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME:?error}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:?error}
+      POSTGRES_DB: ${DATABASE_DBNAME:?error}
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${DATABASE_USERNAME} -d ${DATABASE_DBNAME}',
+        ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+  zookeeper:
+    image: wurstmeister/zookeeper
+    hostname: zookeeper
+    container_name: zookeeper
+    expose:
+      - '2181:2181'
+    networks:
+      - default
+      - kafka-net
+  kafka:
+    image: wurstmeister/kafka
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    expose:
+      - '9092:9092'
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    networks:
+      - kafka-net
+    healthcheck:
+      test: /opt/kafka/bin/kafka-cluster.sh cluster-id --bootstrap-server kafka:9092 || exit 1
+      interval: 1s
+      timeout: 60s
+      retries: 60
+volumes:
+  db-data:
+  redis-data:
+
+networks:
+  default:
+    driver: bridge
+  kafka-net:
+    driver: bridge

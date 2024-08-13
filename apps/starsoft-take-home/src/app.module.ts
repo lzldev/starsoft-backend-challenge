@@ -61,12 +61,11 @@ export type AppConfigService = ConfigService<AppEnv>;
       isGlobal: true,
       inject: [ConfigService],
       useFactory: (configService: AppConfigService) => {
-        configService.get('DEV');
         return {
           store: redisStore as any,
           host: configService.getOrThrow<string>('REDIS_HOST'),
           port: configService.getOrThrow<string>('REDIS_PORT'),
-          ttl: 60 * 1000,
+          ttl: 10,
         };
       },
     }),

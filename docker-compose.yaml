@@ -6,6 +6,8 @@ services:
     restart: always
     volumes:
       - redis-data:/data
+    ports:
+      - 6379:6379
     env_file: &env
       - path: './.env'
         required: false
@@ -25,7 +27,7 @@ services:
     image: apache/kafka
     ports:
       - 9092:9092
-    env_file: *env
+    # env_file: *env
 volumes:
   db-data:
   redis-data:

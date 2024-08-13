@@ -6,6 +6,8 @@ import { ApiModule } from './api/api.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_CLIENT_KEY } from './api/api.constants';
 import { EventsModule } from './events/events.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-store';
 
 export type AppEnv = {
   DEV: boolean;
@@ -18,6 +20,8 @@ export type AppEnv = {
   DATABASE_USERNAME: string;
   DATABASE_PASSWORD: string;
   KAFKA_BROKERS: string;
+  REDIS_HOST: string;
+  REDIS_PORT: string;
 };
 
 export type AppConfigService = ConfigService<AppEnv>;
@@ -52,6 +56,19 @@ export type AppConfigService = ConfigService<AppEnv>;
           },
         },
       ],
+    }),
+    CacheModule.registerAsync({
+      isGlobal: true,
+      inject: [ConfigService],
+      useFactory: (configService: AppConfigService) => {
+        configService.get('DEV');
+        return {
+          store: redisStore as any,
+          host: configService.getOrThrow<string>('REDIS_HOST'),
+          port: configService.getOrThrow<string>('REDIS_PORT'),
+          ttl: 60 * 1000,
+        };
+      },
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],

@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { CanActivate, ExecutionContext, Inject } from '@nestjs/common';
-import { UserService } from '../user.service';
+import { UsersService } from '../users.service';
 import { UserPayload } from '../../auth/user-payload.interface';
 import { UserRole } from '../entities/user.entity';
 import { Reflector } from '@nestjs/core';
@@ -9,7 +9,7 @@ export const ROLES_METADATA_KEY = 'roles';
 
 export class RoleGuard implements CanActivate {
   @Inject()
-  private userService: UserService;
+  private usersService: UsersService;
 
   @Inject()
   private reflector: Reflector;
@@ -31,7 +31,7 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
-    const user = await this.userService.findById(payload.id);
+    const user = await this.usersService.findById(payload.id);
 
     if (!user) {
       return false;

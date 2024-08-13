@@ -1,7 +1,7 @@
 import { Body, Controller, Inject, Param, Put } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ReqUser } from './user.decorator';
-import { UserService } from './user.service';
+import { ReqUser } from './users.decorator';
+import { UsersService } from './users.service';
 import { BasicResponseDto } from '../dto/basic-response.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from './role/roles.decorator';
@@ -12,16 +12,16 @@ import { UserPayload } from '../auth/user-payload.interface';
 @ApiTags('user')
 @ApiBearerAuth()
 @Controller('user')
-export class UserController {
+export class UsersController {
   @Inject()
-  private userService: UserService;
+  private usersService: UsersService;
 
   @Put()
   async updateSelf(
     @Body() updateUserDto: UpdateUserDto,
     @ReqUser() user: UserPayload,
   ): Promise<BasicResponseDto> {
-    await this.userService.updateUser(user.id, updateUserDto);
+    await this.usersService.updateUser(user.id, updateUserDto);
 
     return {
       message: 'User Updated',
@@ -34,7 +34,7 @@ export class UserController {
     @Param('id') userId: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<BasicResponseDto> {
-    const result = await this.userService.updateUser(userId, updateUserDto);
+    const result = await this.usersService.updateUser(userId, updateUserDto);
 
     if (result.affected !== 1) {
       throw new UserError('User does not Exist');

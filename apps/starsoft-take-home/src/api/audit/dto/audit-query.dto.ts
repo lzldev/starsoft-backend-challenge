@@ -15,7 +15,7 @@ export class TemporalQuery {
   until?: number;
 }
 
-export class FindLogsQueryDto extends IntersectionType(
+export class AuditQueryDto extends IntersectionType(
   PaginationDto,
   TemporalQuery,
 ) {}

@@ -11,7 +11,7 @@ export class Message {
 }
 
 @Entity()
-export class Log {
+export class Events {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;

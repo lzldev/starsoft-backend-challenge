@@ -5,7 +5,7 @@ import { configuration } from './config/configuration';
 import { ApiModule } from './api/api.module';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_CLIENT_KEY } from './api/api.constants';
-import { LoggerModule } from './logger/logger.module';
+import { EventsModule } from './events/events.module';
 
 export type AppEnv = {
   DEV: boolean;
@@ -69,7 +69,7 @@ export type AppConfigService = ConfigService<AppEnv>;
         };
       },
     }),
-    LoggerModule,
+    EventsModule,
     ApiModule,
   ],
 })

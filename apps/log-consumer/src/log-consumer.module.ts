@@ -4,7 +4,7 @@ import { LogConsumerService } from './log-consumer.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configuration } from './config/configuration';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Log } from '@app/shared-entities';
+import { Events } from '@app/shared-entities';
 
 export type AppEnv = {
   DEV: boolean;
@@ -41,7 +41,7 @@ export type AppConfigService = ConfigService<AppEnv>;
         };
       },
     }),
-    TypeOrmModule.forFeature([Log]),
+    TypeOrmModule.forFeature([Events]),
   ],
   controllers: [LogConsumerController],
   providers: [LogConsumerService],

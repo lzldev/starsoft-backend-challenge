@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserService } from '../user/user.service';
-import { User } from '../user/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { UserError } from '../../error/userError';
 import { compare } from 'bcrypt';
@@ -9,13 +9,13 @@ import { UserPayload } from './user-payload.interface';
 @Injectable()
 export class AuthService {
   @Inject()
-  private userService: UserService;
+  private usersService: UsersService;
 
   async validateCredentials(
     username: string,
     password: string,
   ): Promise<UserPayload | null> {
-    const user = await this.userService.findByUsername(username);
+    const user = await this.usersService.findByUsername(username);
 
     if (!user) {
       return null;
@@ -31,13 +31,13 @@ export class AuthService {
   }
 
   async registerUser(registerDto: RegisterDto) {
-    const exists = await this.userService.userExists(registerDto);
+    const exists = await this.usersService.userExists(registerDto);
 
     if (exists) {
       throw new UserError('User already Exists');
     }
 
-    return await this.userService.createUser(registerDto);
+    return await this.usersService.createUser(registerDto);
   }
 
   payloadFromUser({ id, username }: User): UserPayload {

@@ -3,7 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { AppEnv } from 'apps/starsoft-take-home/src/app.module';
 import { ConfigService } from '@nestjs/config';
-import { User } from '../../../user/entities/user.entity';
+import { User } from '../../../users/entities/user.entity';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

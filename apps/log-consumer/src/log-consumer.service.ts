@@ -1,4 +1,4 @@
-import { Log } from '@app/shared-entities/log.entity';
+import { Events } from '@app/shared-entities/log.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KafkaMessage } from 'kafkajs';
@@ -6,8 +6,8 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class LogConsumerService {
-  @InjectRepository(Log)
-  logsRepository: Repository<Log>;
+  @InjectRepository(Events)
+  logsRepository: Repository<Events>;
 
   insertBatch(messageData: any[], messages: KafkaMessage[]) {
     const logs = messages.map(({ key, headers, timestamp }, idx) => ({

@@ -1,1 +1,1 @@
-export { Log } from './log.entity';
+export { Events } from './log.entity';

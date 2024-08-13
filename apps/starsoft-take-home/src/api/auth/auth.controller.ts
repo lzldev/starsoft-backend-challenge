@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Inject, Post, Req, UseGuards } from '@nestjs/common';
 import { LocalAuthGuard } from './strategies/local/local.guard';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
@@ -23,8 +15,8 @@ import { LoginResponseDto } from './dto/login-response.dto';
 import { BasicResponseDto } from '../dto/basic-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { RefreshResponse } from './dto/resfresh-response.dto';
-import { ReqUser } from '../user/user.decorator';
-import { UserService } from '../user/user.service';
+import { ReqUser } from '../users/users.decorator';
+import { UsersService } from '../users/users.service';
 import { UserPayload } from './user-payload.interface';
 import { UserError } from '../../error/userError';
 
@@ -39,7 +31,7 @@ export class AuthController {
   private authService: AuthService;
 
   @Inject()
-  private userService: UserService;
+  private usersService: UsersService;
 
   @UseGuards(LocalAuthGuard)
   @ApiBody({
@@ -64,11 +56,11 @@ export class AuthController {
     };
   }
 
-  @Get('/refresh')
+  @Post('/refresh')
   @Public(false)
   @ApiBearerAuth()
   async refresh(@ReqUser() userPayload: UserPayload): Promise<RefreshResponse> {
-    const user = await this.userService.findById(userPayload.id);
+    const user = await this.usersService.findById(userPayload.id);
 
     if (!user) {
       throw new UserError('User not found');

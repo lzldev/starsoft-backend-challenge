@@ -6,15 +6,15 @@ import { hash } from 'bcrypt';
 import { CreateUserDTO } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { BCRYPT_ROUNDS } from '../api.constants';
-import { LoggerService } from '../../logger/logger.service';
+import { EventsService } from '../../events/events.service';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   @InjectRepository(User)
   private userRepository: Repository<User>;
 
   @Inject()
-  private loggerService: LoggerService;
+  private eventsService: EventsService;
 
   findById(id: number): Promise<User | null> {
     return this.userRepository.findOne({
@@ -47,7 +47,7 @@ export class UserService {
       hashed_password,
     });
 
-    void this.loggerService.emitLogEvent('user-created', user.generatedMaps);
+    void this.eventsService.emitLogEvent('user-created', user.generatedMaps);
     return user.generatedMaps;
   }
 
@@ -59,7 +59,7 @@ export class UserService {
       updateUserDto,
     );
 
-    void this.loggerService.emitLogEvent('user-updated', user.generatedMaps);
+    void this.eventsService.emitLogEvent('user-updated', user.generatedMaps);
     return user;
   }
 }

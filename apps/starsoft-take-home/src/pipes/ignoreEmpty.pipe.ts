@@ -13,7 +13,7 @@ export class IgnoreEmptyObjectsPipe implements PipeTransform {
       value !== null &&
       Object.keys(value).length === 0
     ) {
-      throw new HttpException('Empty Object', 400);
+      throw new HttpException('Empty Object in Body', 400);
     }
 
     return value;

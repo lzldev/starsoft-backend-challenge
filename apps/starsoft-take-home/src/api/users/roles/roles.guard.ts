@@ -7,12 +7,12 @@ import { RolesService } from './roles.service';
 
 export const ROLES_METADATA_KEY = 'roles';
 
-export class RoleGuard implements CanActivate {
+export class RolesGuard implements CanActivate {
   @Inject()
   private reflector: Reflector;
 
   @Inject()
-  private roleService: RolesService;
+  private rolesService: RolesService;
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const roles = this.reflector.getAllAndOverride<UserRole[]>(
@@ -31,7 +31,7 @@ export class RoleGuard implements CanActivate {
       return false;
     }
 
-    const userRole = await this.roleService.userRole(payload.id);
+    const userRole = await this.rolesService.userRole(payload.id);
 
     if (!userRole || !roles.includes(userRole)) {
       return false;

@@ -3,7 +3,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtGuard } from './auth/strategies/jwt/jwt.guard';
-import { RoleGuard } from './users/roles/roles.guard';
+import { RolesGuard } from './users/roles/roles.guard';
 import { LogsModule } from './audit/audit.module';
 
 @Module({
@@ -15,7 +15,7 @@ import { LogsModule } from './audit/audit.module';
     },
     {
       provide: APP_GUARD,
-      useClass: RoleGuard,
+      useClass: RolesGuard,
     },
   ],
 })

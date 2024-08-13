@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Inject,
+  Param,
   Query,
   UseInterceptors,
 } from '@nestjs/common';
@@ -29,5 +30,18 @@ export class AuditController {
   @CacheTTL(5)
   findAll(@Query() pagination: AuditQueryDto): Promise<AuditFindResponseDto> {
     return this.auditService.findPaginated(pagination);
+  }
+
+  @Get('/:key')
+  @Roles(UserRole.ADMIN)
+  @ApiResponse({
+    type: AuditFindResponseDto,
+  })
+  @CacheTTL(5)
+  findByKey(
+    @Param('key') key: string,
+    @Query() pagination: AuditQueryDto,
+  ): Promise<AuditFindResponseDto> {
+    return this.auditService.findByKeyPaginated(key, pagination);
   }
 }

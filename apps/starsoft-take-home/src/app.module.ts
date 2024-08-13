@@ -8,6 +8,7 @@ import { KAFKA_CLIENT_KEY } from './api/api.constants';
 import { EventsModule } from './events/events.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-store';
+import { RedisClientOptions } from 'redis';
 
 export type AppEnv = {
   DEV: boolean;
@@ -57,14 +58,13 @@ export type AppConfigService = ConfigService<AppEnv>;
         },
       ],
     }),
-    CacheModule.registerAsync({
+    CacheModule.registerAsync<RedisClientOptions>({
       isGlobal: true,
       inject: [ConfigService],
       useFactory: (configService: AppConfigService) => {
         return {
           store: redisStore as any,
-          host: configService.getOrThrow<string>('REDIS_HOST'),
-          port: configService.getOrThrow<string>('REDIS_PORT'),
+          url: `redis://${configService.getOrThrow<string>('REDIS_HOST')}:${configService.getOrThrow<string>('REDIS_PORT')}`,
           ttl: 10,
         };
       },

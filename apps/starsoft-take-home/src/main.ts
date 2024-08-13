@@ -8,7 +8,6 @@ import { IgnoreEmptyObjectsPipe } from './pipes/ignoreEmpty.pipe';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  console.log('something else');
   app.useGlobalFilters(new HttpUserErrorFilter());
   app.useGlobalPipes(
     new ValidationPipe({

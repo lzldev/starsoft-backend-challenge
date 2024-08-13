@@ -1,0 +1,9 @@
+version: '3.9'
+
+# Overrides for Production
+
+services:
+  api:
+    image: ${API_IMAGE}
+  log-consumer:
+    image: ${LOG_CONSUMER_IMAGE}

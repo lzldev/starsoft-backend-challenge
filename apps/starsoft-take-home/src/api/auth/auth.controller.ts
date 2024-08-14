@@ -33,6 +33,9 @@ export class AuthController {
   @Inject()
   private usersService: UsersService;
 
+  /**
+   * Login into the api
+   */
   @UseGuards(LocalAuthGuard)
   @ApiBody({
     type: LoginDto,
@@ -47,6 +50,9 @@ export class AuthController {
     };
   }
 
+  /**
+   * Register a new account.
+   */
   @Post('/register')
   async register(@Body() registerDto: RegisterDto): Promise<BasicResponseDto> {
     await this.authService.registerUser(registerDto);
@@ -56,6 +62,9 @@ export class AuthController {
     };
   }
 
+  /**
+   * Refresh the token for the current user
+   */
   @Post('/refresh')
   @Public(false)
   @ApiBearerAuth()

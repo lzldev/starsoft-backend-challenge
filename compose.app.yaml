@@ -30,6 +30,7 @@ services:
       - default
       - kafka-net
   log-consumer:
+    restart: on-failure:5
     build:
       dockerfile: ./Dockerfile
       target: log-consumer

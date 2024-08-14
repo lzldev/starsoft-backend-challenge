@@ -3,7 +3,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ReqUser } from './users.decorator';
 import { UsersService } from './users.service';
 import { BasicResponseDto } from '../dto/basic-response.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiProperty,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Roles } from './roles/roles.decorator';
 import { UserRole } from './entities/user.entity';
 import { UserError } from '../../error/userError';
@@ -16,6 +21,9 @@ export class UsersController {
   @Inject()
   private usersService: UsersService;
 
+  /**
+   *  Update the current user
+   */
   @Put()
   async updateSelf(
     @Body() updateUserDto: UpdateUserDto,
@@ -28,6 +36,9 @@ export class UsersController {
     };
   }
 
+  /**
+   * Update a user by id
+   */
   @Put(':id')
   @Roles(UserRole.ADMIN)
   async updateUser(

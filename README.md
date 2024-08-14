@@ -1,73 +1,86 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Starsoft-backend-challenge
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Projeto criada de acordo com para o `starsoft-backend-challenge`.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Veja Também: **[DEPLOY.MD](./DEPLOY.md)**
 
-## Description
+## Tecnologias:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Nestjs
 
-## Installation
+Usado como framework principal do projeto.
 
-```bash
-$ pnpm install
+### Postgres
+
+Banco de Dados do projeto.
+
+### Docker
+
+Usado para o deploy e desenvovimento do projeto.
+
+### Redis
+
+Usado como cache de endpoints de auditoria de eventos, e como cache de roles dos usuários.
+
+### Kafka
+
+Usado para processar os eventos da API em lotes, antes de serem persistidos no banco de dados, diminuindo a carga no Postgres e melhorando a escalabilidade da API.
+
+## Microserviços
+
+- **Api:** Parte Prinicipal da aplicação, fornece os Endpoints REST.
+
+- **Log Consumer:** Microserviço de consumir eventos do Kafka, Separado da aplicação principal com intuito de separar a escalabilidade dos Consumers da API REST.
+
+## Exemplo de uso da API:
+
+> Todo esse processo pode ser realizado pelo swagger em `/swagger`.
+
+1. Crie um usuario usando a rota de registro `POST /auth/register`.
+1. Faça o login na API pela rota `POST /auth/login`
+1. Adicione o token da rota login como autenticação Bearer Token.\
+   > Header: `Authorization: Bearer xxxxxxx`
+1. Eleve a permissão do seu usuario atraves do Endpoint `PUT /user`
+
+   > ```json
+   > {
+   >   "role": "admin"
+   > }
+   > ```
+
+1. Com a role de admin agora é possivel acessar o endpoint de `GET /audit` e `GET /audit/:key`, e listar os eventos da aplicação.
+
+## Desenvolvimento
+
+Requisitos:
+
+- pnpm
+- docker compose
+
+Execute:
+
+```sh
+pnpm install
 ```
 
-## Running the app
+Copie o `.env.development.example` para `.env`\
 
-```bash
-# development
-$ pnpm run start
+Então:
 
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+```sh
+docker compose .env up # isso vai usar o arquivo compose.yaml
 ```
 
-## Test
+Inicie o Serviço:
+\
+**API:**
 
-```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+```
+pnpm start:dev
 ```
 
-## Support
+**Log-Consumer:**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+```
+pnpm start:dev
+```

@@ -6,12 +6,7 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiHeader,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuditService } from './audit.service';
 import { AuditQueryDto } from './dto/audit-query.dto';
 import { Roles } from '../users/roles/roles.decorator';
@@ -24,16 +19,12 @@ import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 @Controller('audit')
 @ApiBearerAuth()
 @UseInterceptors(CacheInterceptor)
-@ApiHeader({
-  name: 'audit',
-  description: 'Requires admin role',
-})
 export class AuditController {
   @Inject()
   private auditService: AuditService;
 
   /**
-   * List paginated events
+   * List events
    */
   @Get()
   @CacheTTL(5)
